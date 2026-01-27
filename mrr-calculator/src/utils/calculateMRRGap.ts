@@ -1,25 +1,15 @@
-/**
- * MRR Gap Calculator Utility
- * 
- * This module contains all the calculation logic for determining the gap
- * between reported MRR and actual bank deposits.
- */
-
-// Supported payment processors
 export type PaymentProcessor = 'stripe' | 'paypal' | 'paddle' | 'lemon_squeezy' | 'other';
 
-// Input parameters for the calculator
 export interface CalculatorInputs {
-  mrr: number;                    // Monthly Recurring Revenue in USD
-  processor: PaymentProcessor;    // Payment processor used
-  refundRate: number;             // Refund rate as percentage (0-10)
-  chargebackRate: number;         // Chargeback rate as percentage (0-5)
-  euUkSalesPercent: number;       // Percentage of sales in EU/UK (0-100)
-  usSalesPercent: number;         // Percentage of sales in US (0-100)
-  isNewStripeAccount: boolean;    // Whether Stripe account is <6 months old
+  mrr: number;
+  processor: PaymentProcessor;
+  refundRate: number;
+  chargebackRate: number;
+  euUkSalesPercent: number;
+  usSalesPercent: number;
+  isNewStripeAccount: boolean;
 }
 
-// Breakdown of all deductions
 export interface DeductionBreakdown {
   processorFees: number;
   refunds: number;

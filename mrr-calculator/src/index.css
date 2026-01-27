@@ -1,12 +1,4 @@
-/**
- * Global Styles
- * 
- * Base Tailwind imports and global resets for the MRR Calculator application.
- */
-
 @import "tailwindcss";
-
-/* ===== BASE RESETS ===== */
 *,
 *::before,
 *::after {
@@ -29,12 +21,9 @@ body {
   min-height: 100vh;
 }
 
-/* Root element styling */
 #root {
   min-height: 100vh;
 }
-
-/* ===== SELECTION COLORS ===== */
 ::selection {
   background-color: rgba(16, 185, 129, 0.3);
   color: #fff;
@@ -45,7 +34,6 @@ body {
   color: #fff;
 }
 
-/* ===== FOCUS RING UTILITIES ===== */
 .focus-ring {
   outline: 2px solid transparent;
   outline-offset: 2px;

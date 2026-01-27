@@ -1,36 +1,41 @@
-/**
- * MRR Bank Calculator Page
- * 
- * Main page component that orchestrates the entire MRR vs Bank Account Calculator.
- * Manages state for all inputs and computes results using useMemo for performance.
- */
-
 import { useState, useMemo } from 'react';
 import { MRRCalculatorForm } from '../components/MRRCalculatorForm';
 import { GapSummary } from '../components/GapSummary';
 import { WaterfallChart } from '../components/WaterfallChart';
 import { LineItemBreakdown } from '../components/LineItemBreakdown';
 import { EducationalCallout } from '../components/EducationalCallout';
-import type { PaymentProcessor, CalculatorInputs } from '../utils/calculateMRRGap';
+import type { PaymentProcessor, CalculatorInputs, CalculationResult } from '../utils/calculateMRRGap';
 import { calculateMRRGap } from '../utils/calculateMRRGap';
 
 export const MRRBankCalculator = () => {
-    // ===== STATE MANAGEMENT =====
-    // All inputs with defaults as specified in PRD
-    const [mrr, setMrr] = useState<number>(10000);
-    const [processor, setProcessor] = useState<PaymentProcessor>('stripe');
+    const [mrr, setMrr] = useState<number | ''>('');
+    const [processor, setProcessor] = useState<PaymentProcessor | ''>('');
     const [refundRate, setRefundRate] = useState<number>(2);
     const [chargebackRate, setChargebackRate] = useState<number>(0.5);
     const [euUkSalesPercent, setEuUkSalesPercent] = useState<number>(30);
     const [usSalesPercent, setUsSalesPercent] = useState<number>(50);
     const [isNewStripeAccount, setIsNewStripeAccount] = useState<boolean>(false);
+    const calculationResult: CalculationResult = useMemo(() => {
+        if (mrr === '' || processor === '') {
+            return {
+                mrr: 0,
+                deductions: {
+                    processorFees: 0,
+                    refunds: 0,
+                    chargebacks: 0,
+                    rollingReserve: 0,
+                    vatCollected: 0,
+                    usSalesTax: 0
+                },
+                netToBank: 0,
+                totalGap: 0,
+                gapPercent: 0
+            };
+        }
 
-    // ===== CALCULATIONS =====
-    // Memoize the calculation to avoid unnecessary recomputation
-    const calculationResult = useMemo(() => {
         const inputs: CalculatorInputs = {
-            mrr,
-            processor,
+            mrr: mrr as number,
+            processor: processor as PaymentProcessor,
             refundRate,
             chargebackRate,
             euUkSalesPercent,
@@ -51,7 +56,7 @@ export const MRRBankCalculator = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <span className="font-bold text-white text-lg tracking-tight">RevenueRealized</span>
+                        <span className="font-bold text-white text-lg tracking-tight">MRR vs Recieved Calculator</span>
                     </div>
                 </div>
             </nav>
@@ -89,7 +94,7 @@ export const MRRBankCalculator = () => {
 
                             <LineItemBreakdown
                                 result={calculationResult}
-                                processor={processor}
+                                processor={processor || 'stripe'}
                             />
                         </div>
 

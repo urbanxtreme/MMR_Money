@@ -1,13 +1,3 @@
-/**
- * Gap Summary Component
- * 
- * Displays the key metrics in large, easy-to-read numbers:
- * - Original MRR
- * - Net to Bank
- * - Total Gap
- * - Gap Percentage
- */
-
 import type { CalculationResult } from '../utils/calculateMRRGap';
 import { formatCurrency, formatPercent } from '../utils/calculateMRRGap';
 
@@ -20,7 +10,6 @@ export const GapSummary = ({ result }: GapSummaryProps) => {
 
     return (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Metric Card: MRR */}
             <div className="bg-slate-800/40 rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors group">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1 group-hover:text-emerald-400 transition-colors">
                     Reported MRR
@@ -33,7 +22,6 @@ export const GapSummary = ({ result }: GapSummaryProps) => {
                 </p>
             </div>
 
-            {/* Metric Card: Net to Bank */}
             <div className="bg-slate-800/40 rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors group">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1 group-hover:text-blue-400 transition-colors">
                     Net to Bank
@@ -46,7 +34,6 @@ export const GapSummary = ({ result }: GapSummaryProps) => {
                 </p>
             </div>
 
-            {/* Metric Card: Total Gap */}
             <div className="bg-slate-800/40 rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors group">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1 group-hover:text-rose-400 transition-colors">
                     Total Deductions
@@ -59,7 +46,6 @@ export const GapSummary = ({ result }: GapSummaryProps) => {
                 </p>
             </div>
 
-            {/* Metric Card: Gap Rate */}
             <div className="bg-slate-800/40 rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors group">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1 group-hover:text-amber-400 transition-colors">
                     Efficiency Rate

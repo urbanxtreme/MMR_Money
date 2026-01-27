@@ -1,11 +1,3 @@
-/**
- * Educational Callout Component
- * 
- * Provides educational content explaining why MRR differs from bank deposits.
- * Covers payment processing, refunds, chargebacks, reserves, and taxes.
- * Tone is educational, calming, and non-salesy.
- */
-
 import { useState } from 'react';
 
 interface EducationalTopic {

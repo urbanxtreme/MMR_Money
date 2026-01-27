@@ -1,10 +1,3 @@
-/**
- * Line Item Breakdown Component
- * 
- * Displays a detailed breakdown of each deduction with amounts and percentages.
- * Provides educational context for each line item.
- */
-
 import type { CalculationResult, PaymentProcessor } from '../utils/calculateMRRGap';
 import {
     formatCurrency,
@@ -17,7 +10,6 @@ interface LineItemBreakdownProps {
     processor: PaymentProcessor;
 }
 
-// Line item configuration
 interface LineItem {
     name: string;
     amount: number;
@@ -35,7 +27,6 @@ export const LineItemBreakdown = ({
 }: LineItemBreakdownProps) => {
     const { mrr, deductions } = result;
 
-    // Build line items array
     const lineItems: LineItem[] = [
         {
             name: `${getProcessorDisplayName(processor)} Fees`,
@@ -99,7 +90,6 @@ export const LineItemBreakdown = ({
         }
     ];
 
-    // Filter out zero-value items
     const activeItems = lineItems.filter(item => item.amount > 0);
 
     return (
@@ -113,7 +103,6 @@ export const LineItemBreakdown = ({
                 Detailed Breakdown
             </h3>
 
-            {/* Category legend */}
             <div className="flex flex-wrap gap-3 mb-4 pb-4 border-b border-slate-700/50">
                 <span className="text-xs text-rose-400 flex items-center gap-1">
                     <span className="w-2 h-2 bg-rose-500 rounded-full" />
@@ -129,7 +118,6 @@ export const LineItemBreakdown = ({
                 </span>
             </div>
 
-            {/* Line items */}
             <div className="space-y-3">
                 {activeItems.map((item, index) => (
                     <div
@@ -167,7 +155,6 @@ export const LineItemBreakdown = ({
                             </div>
                         </div>
 
-                        {/* Progress bar */}
                         <div className="mt-3 h-1 bg-slate-700/50 rounded-full overflow-hidden">
                             <div
                                 className={`h-full rounded-full transition-all duration-500 ${item.category === 'fee' || item.category === 'loss' ? 'bg-rose-500' :
@@ -186,7 +173,6 @@ export const LineItemBreakdown = ({
                 )}
             </div>
 
-            {/* Summary footer */}
             <div className="mt-6 pt-4 border-t border-slate-700/50">
                 <div className="flex items-center justify-between">
                     <span className="text-slate-400">Total Deductions</span>

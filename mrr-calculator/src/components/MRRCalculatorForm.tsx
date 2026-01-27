@@ -1,10 +1,3 @@
-/**
- * MRR Calculator Form Component
- * 
- * Interactive form with live updating inputs for calculating the MRR gap.
- * All inputs trigger instant recalculation without a submit button.
- */
-
 import type { ChangeEvent } from 'react';
 import type { PaymentProcessor } from '../utils/calculateMRRGap';
 import {
@@ -13,10 +6,10 @@ import {
 } from '../utils/calculateMRRGap';
 
 interface MRRCalculatorFormProps {
-    mrr: number;
-    setMrr: (value: number) => void;
-    processor: PaymentProcessor;
-    setProcessor: (value: PaymentProcessor) => void;
+    mrr: number | '';
+    setMrr: (value: number | '') => void;
+    processor: PaymentProcessor | '';
+    setProcessor: (value: PaymentProcessor | '') => void;
     refundRate: number;
     setRefundRate: (value: number) => void;
     chargebackRate: number;
@@ -55,12 +48,18 @@ export const MRRCalculatorForm = ({
     setIsNewStripeAccount
 }: MRRCalculatorFormProps) => {
 
-    // Handle MRR input change with validation
+    // Handle MRR input change
     const handleMrrChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(e.target.value) || 0;
-        // Clamp between min and max
-        const clampedValue = Math.min(Math.max(value, 500), 500000);
-        setMrr(clampedValue);
+        const value = e.target.value;
+        if (value === '') {
+            setMrr('');
+            return;
+        }
+
+        const numValue = parseInt(value);
+        if (!isNaN(numValue)) {
+            setMrr(Math.min(numValue, 10000000));
+        }
     };
 
     return (
@@ -75,7 +74,6 @@ export const MRRCalculatorForm = ({
             </h2>
 
             <div className="space-y-6">
-                {/* MRR Input */}
                 <div>
                     <label
                         htmlFor="mrr-input"
@@ -90,8 +88,9 @@ export const MRRCalculatorForm = ({
                         <input
                             id="mrr-input"
                             type="number"
-                            min={500}
-                            max={500000}
+                            min={0}
+                            max={10000000}
+                            placeholder="Enter MRR..."
                             value={mrr}
                             onChange={handleMrrChange}
                             className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-3 pl-8 pr-4 text-white text-lg font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none placeholder-slate-600"
@@ -99,8 +98,6 @@ export const MRRCalculatorForm = ({
                         />
                     </div>
                 </div>
-
-                {/* Payment Processor */}
                 <div>
                     <label
                         htmlFor="processor-select"
@@ -112,10 +109,11 @@ export const MRRCalculatorForm = ({
                         id="processor-select"
                         value={processor}
                         onChange={(e) => setProcessor(e.target.value as PaymentProcessor)}
-                        className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none cursor-pointer appearance-none"
+                        className={`w-full bg-slate-900/50 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none cursor-pointer appearance-none ${processor === '' ? 'text-slate-500' : 'text-white'}`}
                     >
+                        <option value="" disabled className="text-slate-500 bg-slate-900">Select a processor...</option>
                         {PROCESSORS.map((p) => (
-                            <option key={p} value={p} className="bg-slate-900">
+                            <option key={p} value={p} className="bg-slate-900 text-white">
                                 {getProcessorDisplayName(p)}
                             </option>
                         ))}
@@ -124,13 +122,11 @@ export const MRRCalculatorForm = ({
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        {getProcessorFeeDescription(processor)}
+                        {processor ? getProcessorFeeDescription(processor) : 'Select a processor to see fees'}
                     </p>
                 </div>
 
                 <div className="h-px bg-slate-700/50 my-2" />
-
-                {/* Refund Rate Slider */}
                 <div>
                     <label
                         htmlFor="refund-slider"
@@ -150,8 +146,6 @@ export const MRRCalculatorForm = ({
                         className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb-sm"
                     />
                 </div>
-
-                {/* Chargeback Rate Slider */}
                 <div>
                     <label
                         htmlFor="chargeback-slider"
@@ -171,8 +165,6 @@ export const MRRCalculatorForm = ({
                         className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb-sm"
                     />
                 </div>
-
-                {/* EU/UK Sales Percentage */}
                 <div>
                     <label
                         htmlFor="eu-slider"
@@ -192,8 +184,6 @@ export const MRRCalculatorForm = ({
                         className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb-sm"
                     />
                 </div>
-
-                {/* US Sales Percentage */}
                 <div>
                     <label
                         htmlFor="us-slider"
@@ -213,11 +203,9 @@ export const MRRCalculatorForm = ({
                         className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb-sm"
                     />
                 </div>
-
-                {/* New Stripe Account Toggle */}
                 <div className={`p-4 rounded-xl border transition-all ${processor === 'stripe'
-                        ? 'bg-slate-900/50 border-slate-600'
-                        : 'bg-slate-900/20 border-slate-800 opacity-50'
+                    ? 'bg-slate-900/50 border-slate-600'
+                    : 'bg-slate-900/20 border-slate-800 opacity-50'
                     }`}>
                     <label
                         htmlFor="new-stripe-toggle"
@@ -243,13 +231,13 @@ export const MRRCalculatorForm = ({
                                 disabled={processor !== 'stripe'}
                                 className="sr-only"
                             />
-                            <div className={`w-12 h-6 rounded-full transition-all ${isNewStripeAccount && processor === 'stripe'
-                                    ? 'bg-emerald-500'
-                                    : 'bg-slate-700'
+                            <div className={`w-12 h-6 rounded-full transition-all flex items-center p-0.5 ${isNewStripeAccount && processor === 'stripe'
+                                ? 'bg-emerald-500'
+                                : 'bg-slate-700'
                                 }`}>
-                                <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform mt-0.5 ml-0.5 ${isNewStripeAccount && processor === 'stripe'
-                                        ? 'translate-x-6'
-                                        : 'translate-x-0.5'
+                                <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${isNewStripeAccount && processor === 'stripe'
+                                    ? 'translate-x-6'
+                                    : 'translate-x-0'
                                     }`} />
                             </div>
                         </div>
