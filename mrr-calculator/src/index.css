@@ -16,8 +16,8 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #0f172a;
-  color: #e2e8f0;
+  background-color: #ffffff;
+  color: #1e293b;
   min-height: 100vh;
 }
 
@@ -25,13 +25,13 @@ body {
   min-height: 100vh;
 }
 ::selection {
-  background-color: rgba(16, 185, 129, 0.3);
-  color: #fff;
+  background-color: rgba(16, 185, 129, 0.25);
+  color: #0f172a;
 }
 
 ::-moz-selection {
-  background-color: rgba(16, 185, 129, 0.3);
-  color: #fff;
+  background-color: rgba(16, 185, 129, 0.25);
+  color: #0f172a;
 }
 
 .focus-ring {

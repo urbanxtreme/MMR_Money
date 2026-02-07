@@ -54,58 +54,58 @@ export const EducationalCallout: React.FC = () => {
     };
 
     return (
-        <div className="bg-slate-800/40 rounded-xl p-6 border border-slate-700/50">
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
             {/* Header */}
             <div className="flex items-start gap-3 mb-6">
-                <div className="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center shrink-0">
-                    <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                 </div>
                 <div>
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-lg font-semibold text-gray-900">
                         Understanding the MRR-to-Bank Gap
                     </h3>
-                    <p className="text-sm text-slate-400 mt-1">
+                    <p className="text-sm text-gray-500 mt-1">
                         It's normal and expected. Here's why your numbers don't match up.
                     </p>
                 </div>
             </div>
 
-            {/* Key insight banner */}
-            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 mb-6">
+            {/* Key Insight Banner */}
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-6">
                 <div className="flex items-center gap-2 mb-2">
-                    <svg className="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    <span className="font-medium text-emerald-300">Key Insight</span>
+                    <span className="font-medium text-emerald-700">Key Insight</span>
                 </div>
-                <p className="text-sm text-emerald-200/80">
+                <p className="text-sm text-emerald-800">
                     The gap between your reported MRR and actual bank deposit is <strong>completely normal</strong>.
                     Understanding it helps you forecast cash flow accurately and avoid surprises.
                     Most SaaS businesses see a 15-35% gap depending on their processor, geography, and refund rates.
                 </p>
             </div>
 
-            {/* Expandable topics */}
-            <div className="space-y-3">
+            {/* Expandable Topics */}
+            <div className="space-y-2">
                 {EDUCATIONAL_TOPICS.map((topic) => (
                     <div
                         key={topic.id}
-                        className="bg-slate-800/30 rounded-xl border border-slate-700/50 overflow-hidden transition-all"
+                        className="bg-gray-50 rounded-lg border border-gray-100 overflow-hidden"
                     >
                         <button
                             onClick={() => toggleTopic(topic.id)}
-                            className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-800/50 transition-colors"
+                            className="w-full p-4 flex items-center justify-between text-left hover:bg-gray-100 transition-colors"
                             aria-expanded={expandedTopic === topic.id}
                             aria-controls={`topic-${topic.id}`}
                         >
                             <div className="flex items-center gap-3">
-                                <span className="text-2xl">{topic.icon}</span>
-                                <span className="font-medium text-white">{topic.title}</span>
+                                <span className="text-xl">{topic.icon}</span>
+                                <span className="font-medium text-gray-900">{topic.title}</span>
                             </div>
                             <svg
-                                className={`w-5 h-5 text-slate-400 transition-transform ${expandedTopic === topic.id ? 'rotate-180' : ''
+                                className={`w-5 h-5 text-gray-400 transition-transform ${expandedTopic === topic.id ? 'rotate-180' : ''
                                     }`}
                                 fill="none"
                                 stroke="currentColor"
@@ -118,13 +118,13 @@ export const EducationalCallout: React.FC = () => {
                         {expandedTopic === topic.id && (
                             <div
                                 id={`topic-${topic.id}`}
-                                className="px-4 pb-4 border-t border-slate-700/50"
+                                className="px-4 pb-4 border-t border-gray-100"
                             >
-                                <p className="text-sm text-slate-300 mt-4 leading-relaxed">
+                                <p className="text-sm text-gray-600 mt-4 leading-relaxed">
                                     {topic.content}
                                 </p>
-                                <div className="mt-4 p-3 bg-slate-700/30 rounded-lg">
-                                    <p className="text-sm text-amber-300 flex items-start gap-2">
+                                <div className="mt-4 p-3 bg-amber-50 border border-amber-100 rounded-lg">
+                                    <p className="text-sm text-amber-800 flex items-start gap-2">
                                         <span className="shrink-0">💡</span>
                                         <span>{topic.keyPoint}</span>
                                     </p>
@@ -135,27 +135,27 @@ export const EducationalCallout: React.FC = () => {
                 ))}
             </div>
 
-            {/* Bottom tips */}
-            <div className="mt-6 pt-6 border-t border-slate-700/50">
-                <h4 className="text-sm font-medium text-white mb-3">
+            {/* Pro Tips */}
+            <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="text-sm font-semibold text-gray-900 mb-3">
                     Pro Tips for Better Cash Flow
                 </h4>
-                <ul className="space-y-2 text-sm text-slate-400">
+                <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-start gap-2">
-                        <span className="text-emerald-400 mt-0.5">✓</span>
+                        <span className="text-emerald-500 mt-0.5">✓</span>
                         Track net revenue (after fees) instead of gross MRR
                     </li>
                     <li className="flex items-start gap-2">
-                        <span className="text-emerald-400 mt-0.5">✓</span>
+                        <span className="text-emerald-500 mt-0.5">✓</span>
                         Set aside 25-30% of reported MRR for the gap
                     </li>
                     <li className="flex items-start gap-2">
-                        <span className="text-emerald-400 mt-0.5">✓</span>
+                        <span className="text-emerald-500 mt-0.5">✓</span>
                         Use annual plans to reduce per-transaction fees
                     </li>
                     <li className="flex items-start gap-2">
-                        <span className="text-emerald-400 mt-0.5">✓</span>
-                        Consider Paddle/LemonSqueezy if selling globally (they handle taxes)
+                        <span className="text-emerald-500 mt-0.5">✓</span>
+                        Consider Paddle/LemonSqueezy if selling globally
                     </li>
                 </ul>
             </div>

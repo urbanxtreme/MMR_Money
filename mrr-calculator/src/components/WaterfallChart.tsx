@@ -23,18 +23,19 @@ interface ChartItem {
     isPositive: boolean;
     tooltip: string;
     category: 'revenue' | 'fee' | 'hold' | 'tax';
-    // For waterfall effect
     start: number;
     end: number;
 }
 
+// Color palette for chart
 const COLORS = {
-    revenue: '#10b981',
-    fee: '#ef4444',
-    hold: '#f97316',
-    tax: '#6b7280',
+    revenue: '#10b981', // emerald-500
+    fee: '#ef4444',     // red-500
+    hold: '#f97316',    // orange-500
+    tax: '#9ca3af',     // gray-400
 };
 
+// Tooltip descriptions for each item
 const TOOLTIP_DESCRIPTIONS: Record<string, string> = {
     'MRR': 'Your total reported Monthly Recurring Revenue before any deductions.',
     'Processor Fees': 'Fees charged by your payment processor for handling transactions.',
@@ -49,10 +50,12 @@ const TOOLTIP_DESCRIPTIONS: Record<string, string> = {
 export const WaterfallChart = ({ result }: WaterfallChartProps) => {
     const { mrr, deductions, netToBank } = result;
 
+    // Build chart data with waterfall effect
     const chartData = useMemo(() => {
         const items: ChartItem[] = [];
         let runningTotal = mrr;
 
+        // Starting MRR
         items.push({
             name: 'MRR',
             value: mrr,
@@ -64,6 +67,7 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
             end: mrr
         });
 
+        // Helper to add deduction items
         const addDeduction = (
             name: string,
             value: number,
@@ -85,6 +89,7 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
             }
         };
 
+        // Add all deductions
         addDeduction('Processor Fees', deductions.processorFees, 'fee');
         addDeduction('Refunds', deductions.refunds, 'fee');
         addDeduction('Chargebacks', deductions.chargebacks, 'fee');
@@ -92,6 +97,7 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
         addDeduction('VAT Collected', deductions.vatCollected, 'tax');
         addDeduction('US Sales Tax', deductions.usSalesTax, 'tax');
 
+        // Final net amount
         items.push({
             name: 'Net to Bank',
             value: netToBank,
@@ -119,22 +125,22 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
         };
 
         return (
-            <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-xl p-4 shadow-2xl max-w-xs">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-lg max-w-xs">
                 <div className="flex items-center gap-2 mb-2">
                     <div
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: data.fill }}
                     />
-                    <span className="font-semibold text-white">{data.name}</span>
+                    <span className="font-semibold text-gray-900">{data.name}</span>
                 </div>
-                <p className="text-2xl font-bold text-white mb-2">
+                <p className="text-2xl font-bold text-gray-900 mb-2">
                     {data.isPositive ? '' : '-'}{formatCurrency(data.value)}
                 </p>
-                <p className="text-sm text-slate-400 mb-2">{data.tooltip}</p>
-                <span className={`inline-block text-xs px-2 py-1 rounded-full ${data.category === 'revenue' ? 'bg-emerald-500/20 text-emerald-300' :
-                    data.category === 'fee' ? 'bg-rose-500/20 text-rose-300' :
-                        data.category === 'hold' ? 'bg-orange-500/20 text-orange-300' :
-                            'bg-slate-500/20 text-slate-300'
+                <p className="text-sm text-gray-600 mb-2">{data.tooltip}</p>
+                <span className={`inline-block text-xs px-2 py-1 rounded-full ${data.category === 'revenue' ? 'bg-emerald-100 text-emerald-700' :
+                        data.category === 'fee' ? 'bg-rose-100 text-rose-700' :
+                            data.category === 'hold' ? 'bg-orange-100 text-orange-700' :
+                                'bg-gray-100 text-gray-700'
                     }`}>
                     {categoryLabels[data.category]}
                 </span>
@@ -143,68 +149,67 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
     };
 
     return (
-        <div className="bg-slate-800/40 rounded-xl p-6 border border-slate-700/50 flex flex-col">
-            <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                <div className="p-1.5 bg-blue-500/10 rounded-lg">
-                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                </div>
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            {/* Header */}
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Where Your Money Goes
             </h3>
+
+            {/* Legend */}
             <div className="flex flex-wrap gap-4 mb-6">
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <span className="text-xs font-medium text-slate-400">Your Money</span>
+                    <span className="text-xs font-medium text-gray-600">Your Money</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-rose-500" />
-                    <span className="text-xs font-medium text-slate-400">Fees/Losses</span>
+                    <span className="text-xs font-medium text-gray-600">Fees/Losses</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-orange-500" />
-                    <span className="text-xs font-medium text-slate-400">Hold</span>
+                    <span className="text-xs font-medium text-gray-600">Hold</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-slate-500 opacity-70" />
-                    <span className="text-xs font-medium text-slate-400">Taxes</span>
+                    <div className="w-3 h-3 rounded-full bg-gray-400" />
+                    <span className="text-xs font-medium text-gray-600">Taxes</span>
                 </div>
             </div>
 
-            <div className="h-[400px] w-full">
+            {/* Chart */}
+            <div className="h-[350px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={chartData}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
+                        margin={{ top: 20, right: 20, left: 10, bottom: 80 }}
                     >
                         <XAxis
                             dataKey="name"
-                            tick={{ fill: '#94a3b8', fontSize: 12, dy: 10 }}
-                            axisLine={{ stroke: '#475569' }}
-                            tickLine={{ stroke: '#475569' }}
+                            tick={{ fill: '#6b7280', fontSize: 11 }}
+                            axisLine={{ stroke: '#e5e7eb' }}
+                            tickLine={{ stroke: '#e5e7eb' }}
                             angle={-45}
                             textAnchor="end"
-                            height={100}
+                            height={80}
                             interval={0}
                         />
                         <YAxis
-                            tick={{ fill: '#94a3b8', fontSize: 12 }}
-                            axisLine={{ stroke: '#475569' }}
-                            tickLine={{ stroke: '#475569' }}
+                            tick={{ fill: '#6b7280', fontSize: 11 }}
+                            axisLine={{ stroke: '#e5e7eb' }}
+                            tickLine={{ stroke: '#e5e7eb' }}
                             tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
                             domain={[0, 'dataMax']}
                         />
                         <Tooltip
                             content={<CustomTooltip />}
-                            cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
+                            cursor={{ fill: 'rgba(0, 0, 0, 0.03)' }}
                         />
-                        <ReferenceLine y={0} stroke="#475569" />
+                        <ReferenceLine y={0} stroke="#e5e7eb" />
                         <Bar dataKey="end" radius={[4, 4, 0, 0]}>
                             {chartData.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
                                     fill={entry.fill}
-                                    opacity={entry.category === 'tax' ? 0.7 : 1}
+                                    opacity={entry.category === 'tax' ? 0.8 : 1}
                                 />
                             ))}
                         </Bar>
@@ -212,7 +217,7 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
                 </ResponsiveContainer>
             </div>
 
-            <p className="text-xs text-slate-500 text-center mt-4 md:hidden">
+            <p className="text-xs text-gray-400 text-center mt-4 md:hidden">
                 Tap on bars for details
             </p>
         </div>
