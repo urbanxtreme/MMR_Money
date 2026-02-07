@@ -138,9 +138,9 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
                 </p>
                 <p className="text-sm text-gray-600 mb-2">{data.tooltip}</p>
                 <span className={`inline-block text-xs px-2 py-1 rounded-full ${data.category === 'revenue' ? 'bg-emerald-100 text-emerald-700' :
-                        data.category === 'fee' ? 'bg-rose-100 text-rose-700' :
-                            data.category === 'hold' ? 'bg-orange-100 text-orange-700' :
-                                'bg-gray-100 text-gray-700'
+                    data.category === 'fee' ? 'bg-rose-100 text-rose-700' :
+                        data.category === 'hold' ? 'bg-orange-100 text-orange-700' :
+                            'bg-gray-100 text-gray-700'
                     }`}>
                     {categoryLabels[data.category]}
                 </span>
@@ -149,7 +149,7 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
     };
 
     return (
-        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+        <div className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm">
             {/* Header */}
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Where Your Money Goes
@@ -176,11 +176,11 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
             </div>
 
             {/* Chart */}
-            <div className="h-[350px] w-full">
+            <div className="h-[340px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={chartData}
-                        margin={{ top: 20, right: 20, left: 10, bottom: 80 }}
+                        margin={{ top: 20, right: 20, left: 10, bottom: 30 }}
                     >
                         <XAxis
                             dataKey="name"
@@ -189,7 +189,7 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
                             tickLine={{ stroke: '#e5e7eb' }}
                             angle={-45}
                             textAnchor="end"
-                            height={80}
+                            height={50}
                             interval={0}
                         />
                         <YAxis

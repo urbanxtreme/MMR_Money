@@ -67,7 +67,7 @@ export const MRRBankCalculator = () => {
             <div className="flex flex-col lg:flex-row">
                 {/* Left Sidebar - Fixed on Desktop */}
                 <aside className="w-full lg:w-[380px] lg:flex-shrink-0 bg-gray-50 border-b lg:border-b-0 lg:border-r border-gray-200">
-                    <div className="lg:sticky lg:top-14 lg:w-[380px] lg:h-[calc(100vh-56px)] lg:overflow-y-auto p-4 lg:p-6">
+                    <div className="lg:sticky lg:top-14 lg:w-[380px] lg:h-[calc(100vh-56px)] overflow-y-auto p-4 lg:p-6 no-scrollbar">
                         <MRRCalculatorForm
                             mrr={mrr}
                             setMrr={setMrr}

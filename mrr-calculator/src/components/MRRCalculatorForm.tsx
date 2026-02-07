@@ -22,7 +22,6 @@ interface MRRCalculatorFormProps {
     setIsNewStripeAccount: (value: boolean) => void;
 }
 
-// Available payment processors
 const PROCESSORS: PaymentProcessor[] = [
     'stripe',
     'paypal',
@@ -48,213 +47,196 @@ export const MRRCalculatorForm = ({
     setIsNewStripeAccount
 }: MRRCalculatorFormProps) => {
 
-    // Handle MRR input change
     const handleMrrChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         if (value === '') {
             setMrr('');
             return;
         }
-
         const numValue = parseInt(value);
-        if (!isNaN(numValue)) {
-            setMrr(Math.min(numValue, 10000000));
-        }
+        if (!isNaN(numValue)) setMrr(Math.min(numValue, 10000000));
+    };
+
+    const getSliderBackground = (value: number, max: number, colorStart: string, colorEnd: string) => {
+        const percentage = (value / max) * 100;
+        return {
+            background: `linear-gradient(to right, ${colorStart} 0%, ${colorEnd} ${percentage}%, #f1f5f9 ${percentage}%, #f1f5f9 100%)`
+        };
     };
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-2.5 font-sans text-gray-900">
             {/* Header */}
-            <div>
-                <h2 className="text-base font-semibold text-gray-900">Configuration</h2>
-                <p className="text-xs text-gray-500">Enter your revenue details</p>
-            </div>
-
-            {/* MRR Input */}
-            <div>
-                <label
-                    htmlFor="mrr-input"
-                    className="block text-xs font-medium text-gray-700 mb-1"
-                >
-                    Monthly Recurring Revenue
-                </label>
-                <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base">
-                        $
-                    </span>
-                    <input
-                        id="mrr-input"
-                        type="number"
-                        min={0}
-                        max={10000000}
-                        placeholder="10,000"
-                        value={mrr}
-                        onChange={handleMrrChange}
-                        className="w-full bg-white border border-gray-300 rounded-lg py-2 pl-8 pr-4 text-gray-900 text-base font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none placeholder-gray-400"
-                        aria-label="Monthly Recurring Revenue in USD"
-                    />
+            <div className="flex items-center justify-between py-1">
+                <div>
+                    <h2 className="text-lg font-bold tracking-tight text-gray-900">
+                        Configuration
+                    </h2>
+                    <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">
+                        Revenue Parameters
+                    </p>
                 </div>
             </div>
 
-            {/* Payment Processor */}
-            <div>
-                <label
-                    htmlFor="processor-select"
-                    className="block text-xs font-medium text-gray-700 mb-1"
-                >
-                    Payment Processor
-                </label>
-                <select
-                    id="processor-select"
-                    value={processor}
-                    onChange={(e) => setProcessor(e.target.value as PaymentProcessor)}
-                    className={`w-full bg-white border border-gray-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none cursor-pointer ${processor === '' ? 'text-gray-400' : 'text-gray-900'}`}
-                >
-                    <option value="" disabled className="text-gray-400">Select processor...</option>
-                    {PROCESSORS.map((p) => (
-                        <option key={p} value={p} className="text-gray-900">
-                            {getProcessorDisplayName(p)}
-                        </option>
-                    ))}
-                </select>
-                {processor && (
-                    <p className="text-[10px] text-gray-500 mt-1 flex items-center gap-1">
-                        <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {getProcessorFeeDescription(processor)}
-                    </p>
-                )}
-            </div>
+            {/* Hero Input & Processor Group */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden ring-1 ring-gray-900/5 hover:ring-gray-900/10 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all duration-300">
+                {/* Modern MRR Input */}
+                <div className="px-3 pt-3 pb-2 bg-gradient-to-b from-white to-gray-50/50">
+                    <label htmlFor="mrr-input" className="block text-[9px] uppercase font-bold text-gray-400 mb-0.5 tracking-widest">
+                        Monthly Revenue
+                    </label>
+                    <div className="relative group flex items-baseline gap-0.5">
+                        <span className="text-2xl text-gray-300 font-light group-focus-within:text-emerald-500 transition-colors duration-300">$</span>
+                        <input
+                            id="mrr-input"
+                            type="number"
+                            min={0}
+                            placeholder="0"
+                            value={mrr}
+                            onChange={handleMrrChange}
+                            className="w-full bg-transparent border-none p-0 text-3xl font-extrabold text-gray-900 placeholder-gray-200 focus:ring-0 focus:shadow-none transition-all outline-none tabular-nums tracking-tight"
+                        />
+                    </div>
+                </div>
 
-            {/* Divider */}
-            <div className="border-t border-gray-200 my-2" />
-
-            {/* Refund Rate Slider */}
-            <div>
-                <label
-                    htmlFor="refund-slider"
-                    className="flex justify-between text-xs font-medium text-gray-700 mb-1.5"
-                >
-                    <span>Refund Rate</span>
-                    <span className="text-emerald-600 font-semibold">{refundRate}%</span>
-                </label>
-                <input
-                    id="refund-slider"
-                    type="range"
-                    min={0}
-                    max={10}
-                    step={0.5}
-                    value={refundRate}
-                    onChange={(e) => setRefundRate(parseFloat(e.target.value))}
-                    className="w-full h-1.5"
-                />
-            </div>
-
-            {/* Chargeback Rate Slider */}
-            <div>
-                <label
-                    htmlFor="chargeback-slider"
-                    className="flex justify-between text-xs font-medium text-gray-700 mb-1.5"
-                >
-                    <span>Chargeback Rate</span>
-                    <span className="text-orange-600 font-semibold">{chargebackRate}%</span>
-                </label>
-                <input
-                    id="chargeback-slider"
-                    type="range"
-                    min={0}
-                    max={5}
-                    step={0.1}
-                    value={chargebackRate}
-                    onChange={(e) => setChargebackRate(parseFloat(e.target.value))}
-                    className="w-full h-1.5"
-                />
-            </div>
-
-            {/* EU/UK Sales Slider */}
-            <div>
-                <label
-                    htmlFor="eu-slider"
-                    className="flex justify-between text-xs font-medium text-gray-700 mb-1.5"
-                >
-                    <span>Sales in EU/UK</span>
-                    <span className="text-blue-600 font-semibold">{euUkSalesPercent}%</span>
-                </label>
-                <input
-                    id="eu-slider"
-                    type="range"
-                    min={0}
-                    max={100}
-                    step={5}
-                    value={euUkSalesPercent}
-                    onChange={(e) => setEuUkSalesPercent(parseInt(e.target.value))}
-                    className="w-full h-1.5"
-                />
-            </div>
-
-            {/* US Sales Slider */}
-            <div>
-                <label
-                    htmlFor="us-slider"
-                    className="flex justify-between text-xs font-medium text-gray-700 mb-1.5"
-                >
-                    <span>Sales in US</span>
-                    <span className="text-purple-600 font-semibold">{usSalesPercent}%</span>
-                </label>
-                <input
-                    id="us-slider"
-                    type="range"
-                    min={0}
-                    max={100}
-                    step={5}
-                    value={usSalesPercent}
-                    onChange={(e) => setUsSalesPercent(parseInt(e.target.value))}
-                    className="w-full h-1.5"
-                />
-            </div>
-
-            {/* New Stripe Account Toggle */}
-            <div className={`p-3 rounded-xl border transition-all ${processor === 'stripe'
-                ? 'bg-white border-gray-200 shadow-sm'
-                : 'bg-gray-100 border-gray-100 opacity-60'
-                }`}>
-                <label
-                    htmlFor="new-stripe-toggle"
-                    className="flex items-center justify-between cursor-pointer"
-                >
-                    <div className="flex items-center gap-2">
-                        <span className="text-base">🆕</span>
-                        <div>
-                            <span className="text-xs font-medium text-gray-800 block">
-                                New Stripe Account
-                            </span>
-                            <span className="text-[10px] text-gray-500">
-                                &lt; 6 months (10% reserve)
-                            </span>
+                {/* Processor Selector */}
+                <div className="px-3 py-2 border-t border-gray-100 bg-gray-50/30">
+                    <div className="relative">
+                        <select
+                            value={processor}
+                            onChange={(e) => setProcessor(e.target.value as PaymentProcessor)}
+                            className="w-full appearance-none bg-white border-0 py-2 pl-3 pr-8 rounded-lg text-xs font-semibold text-gray-700 shadow-sm ring-1 ring-gray-200 hover:ring-gray-300 focus:ring-2 focus:ring-emerald-500/20 transition-all cursor-pointer"
+                        >
+                            <option value="" disabled>Select Payment Processor...</option>
+                            {PROCESSORS.map((p) => (
+                                <option key={p} value={p}>{getProcessorDisplayName(p)}</option>
+                            ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                            <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
                         </div>
                     </div>
+                    {processor && (
+                        <div className="mt-1.5 flex items-center gap-1.5 text-[9px] font-medium text-blue-600 bg-blue-50/80 px-2 py-0.5 rounded-md w-fit">
+                            <span className="w-1 h-1 rounded-full bg-blue-500"></span>
+                            {getProcessorFeeDescription(processor)}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Controls Container */}
+            <div className="space-y-2">
+
+                {/* Risk Factor Group */}
+                <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
+                    <div className="space-y-2">
+                        {/* Refund Slider */}
+                        <div>
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">Refunds</label>
+                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 tabular-nums shadow-sm">{refundRate}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                min={0} max={10} step={0.5}
+                                value={refundRate}
+                                onChange={(e) => setRefundRate(parseFloat(e.target.value))}
+                                className="w-full text-emerald-500"
+                                style={getSliderBackground(refundRate, 10, '#34d399', '#059669')}
+                            />
+                        </div>
+
+                        {/* Chargeback Slider */}
+                        <div>
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">Chargebacks</label>
+                                <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-100 tabular-nums shadow-sm">{chargebackRate}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                min={0} max={5} step={0.1}
+                                value={chargebackRate}
+                                onChange={(e) => setChargebackRate(parseFloat(e.target.value))}
+                                className="w-full text-orange-500"
+                                style={getSliderBackground(chargebackRate, 5, '#fb923c', '#ea580c')}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Geography Group */}
+                <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
+                    <div className="space-y-2">
+                        {/* EU Slider */}
+                        <div>
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">EU/UK Sales</label>
+                                <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 tabular-nums shadow-sm">{euUkSalesPercent}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                min={0} max={100} step={5}
+                                value={euUkSalesPercent}
+                                onChange={(e) => setEuUkSalesPercent(parseInt(e.target.value))}
+                                className="w-full text-blue-500"
+                                style={getSliderBackground(euUkSalesPercent, 100, '#60a5fa', '#2563eb')}
+                            />
+                        </div>
+
+                        {/* US Slider */}
+                        <div>
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">US Sales</label>
+                                <span className="text-[10px] font-bold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-100 tabular-nums shadow-sm">{usSalesPercent}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                min={0} max={100} step={5}
+                                value={usSalesPercent}
+                                onChange={(e) => setUsSalesPercent(parseInt(e.target.value))}
+                                className="w-full text-purple-500"
+                                style={getSliderBackground(usSalesPercent, 100, '#c084fc', '#9333ea')}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            {/* Modern Stripe Toggle */}
+            <div className={`relative overflow-hidden rounded-xl border transition-all duration-300 group ${processor === 'stripe' ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-100 bg-gray-50 opacity-60'}`}>
+                <label className="flex items-center justify-between p-3 cursor-pointer z-10 relative">
+                    <div className="flex items-center gap-2.5">
+                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs shadow-sm transition-colors ${processor === 'stripe' ? 'bg-white text-emerald-600' : 'bg-gray-200 text-gray-400'}`}>
+                            🚀
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[11px] font-bold text-gray-900">New Stripe Account</span>
+                            <span className="text-[9px] font-medium text-gray-500">10% Rolling Reserve</span>
+                        </div>
+                    </div>
+                    {/* Custom IOS Switch */}
                     <div className="relative">
                         <input
-                            id="new-stripe-toggle"
                             type="checkbox"
                             checked={isNewStripeAccount}
                             onChange={(e) => setIsNewStripeAccount(e.target.checked)}
                             disabled={processor !== 'stripe'}
                             className="sr-only"
                         />
-                        <div className={`w-9 h-5 rounded-full transition-all ${isNewStripeAccount && processor === 'stripe'
-                            ? 'bg-emerald-500'
-                            : 'bg-gray-300'
-                            }`}>
-                            <div className={`w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform absolute top-0.5 ${isNewStripeAccount && processor === 'stripe'
-                                ? 'translate-x-4'
-                                : 'translate-x-0.5'
-                                }`} />
-                        </div>
+                        <div className={`w-8 h-4.5 rounded-full transition-colors duration-300 ${isNewStripeAccount && processor === 'stripe' ? 'bg-emerald-500 shadow-inner' : 'bg-gray-300'}`}></div>
+                        <div className={`absolute left-0.5 top-0.5 bg-white w-3.5 h-3.5 rounded-full shadow-sm transition-transform duration-300 ${isNewStripeAccount && processor === 'stripe' ? 'translate-x-3.5' : 'translate-x-0'}`}></div>
                     </div>
                 </label>
+                {/* Background glow decoration */}
+                {processor === 'stripe' && isNewStripeAccount && (
+                    <div className="absolute top-0 right-0 -mt-4 -mr-4 w-20 h-20 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none"></div>
+                )}
             </div>
+
         </div>
     );
 };
