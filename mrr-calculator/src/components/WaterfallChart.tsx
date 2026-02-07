@@ -6,8 +6,7 @@ import {
     YAxis,
     Tooltip,
     ResponsiveContainer,
-    Cell,
-    ReferenceLine
+    Cell
 } from 'recharts';
 import type { CalculationResult } from '../utils/calculateMRRGap';
 import { formatCurrency } from '../utils/calculateMRRGap';
@@ -179,32 +178,27 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
             <div className="h-[340px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
+                        layout="vertical"
                         data={chartData}
-                        margin={{ top: 20, right: 20, left: 10, bottom: 30 }}
+                        margin={{ top: 10, right: 30, left: 10, bottom: 0 }}
                     >
                         <XAxis
-                            dataKey="name"
-                            tick={{ fill: '#6b7280', fontSize: 11 }}
-                            axisLine={{ stroke: '#e5e7eb' }}
-                            tickLine={{ stroke: '#e5e7eb' }}
-                            angle={-45}
-                            textAnchor="end"
-                            height={50}
-                            interval={0}
+                            type="number"
+                            hide
                         />
                         <YAxis
-                            tick={{ fill: '#6b7280', fontSize: 11 }}
-                            axisLine={{ stroke: '#e5e7eb' }}
-                            tickLine={{ stroke: '#e5e7eb' }}
-                            tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                            domain={[0, 'dataMax']}
+                            dataKey="name"
+                            type="category"
+                            width={100}
+                            tick={{ fill: '#4b5563', fontSize: 11, fontWeight: 500 }}
+                            axisLine={false}
+                            tickLine={false}
                         />
                         <Tooltip
                             content={<CustomTooltip />}
                             cursor={{ fill: 'rgba(0, 0, 0, 0.03)' }}
                         />
-                        <ReferenceLine y={0} stroke="#e5e7eb" />
-                        <Bar dataKey="end" radius={[4, 4, 0, 0]}>
+                        <Bar dataKey="end" radius={[0, 4, 4, 0]} barSize={24}>
                             {chartData.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
