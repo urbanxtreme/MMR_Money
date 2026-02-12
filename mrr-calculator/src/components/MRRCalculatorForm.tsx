@@ -48,21 +48,43 @@ export const MRRCalculatorForm = ({
 }: MRRCalculatorFormProps) => {
 
     const handleMrrChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
+        // Remove non-numeric chars except dot
+        const value = e.target.value.replace(/[^0-9.]/g, '');
+
         if (value === '') {
             setMrr('');
             return;
         }
-        const numValue = parseInt(value);
-        if (!isNaN(numValue)) setMrr(Math.min(numValue, 10000000));
+
+        // Handle multiple dots
+        const parts = value.split('.');
+        if (parts.length > 2) return;
+
+        setMrr(parseFloat(value));
     };
 
-    const getSliderBackground = (value: number, max: number, colorStart: string, colorEnd: string) => {
+    const handleBlur = () => {
+        if (mrr === '') return;
+
+        // Clamp between 500 and 500,000
+        let newVal = mrr;
+        if (newVal < 500) newVal = 500;
+        if (newVal > 500000) newVal = 500000;
+
+        setMrr(newVal);
+    };
+
+    const getSliderBackground = (value: number, max: number, color: string) => {
         const percentage = (value / max) * 100;
         return {
-            background: `linear-gradient(to right, ${colorStart} 0%, ${colorEnd} ${percentage}%, #f1f5f9 ${percentage}%, #f1f5f9 100%)`
+            backgroundSize: `${percentage}% 100%`,
+            backgroundImage: `linear-gradient(${color}, ${color})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: '#f1f5f9'
         };
     };
+
+
 
     return (
         <div className="space-y-2.5 font-sans text-gray-900">
@@ -82,18 +104,26 @@ export const MRRCalculatorForm = ({
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden ring-1 ring-gray-900/5 hover:ring-gray-900/10 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all duration-300">
                 {/* Modern MRR Input */}
                 <div className="px-3 pt-3 pb-2 bg-gradient-to-b from-white to-gray-50/50">
-                    <label htmlFor="mrr-input" className="block text-[9px] uppercase font-bold text-gray-400 mb-0.5 tracking-widest">
-                        Monthly Revenue
-                    </label>
+                    <div className="flex justify-between items-center mb-0.5">
+                        <label htmlFor="mrr-input" className="block text-[9px] uppercase font-bold text-gray-400 tracking-widest">
+                            Monthly Revenue
+                        </label>
+                        {mrr === '' && (
+                            <span className="text-[9px] font-bold text-rose-500 animate-pulse">
+                                Required
+                            </span>
+                        )}
+                    </div>
                     <div className="relative group flex items-baseline gap-0.5">
                         <span className="text-2xl text-gray-300 font-light group-focus-within:text-emerald-500 transition-colors duration-300">$</span>
                         <input
                             id="mrr-input"
-                            type="number"
-                            min={0}
-                            placeholder="0"
-                            value={mrr}
+                            type="text"
+                            inputMode="decimal"
+                            placeholder="10,000"
+                            value={mrr === '' ? '' : mrr.toLocaleString('en-US', { maximumFractionDigits: 2 })}
                             onChange={handleMrrChange}
+                            onBlur={handleBlur}
                             className="w-full bg-transparent border-none p-0 text-3xl font-extrabold text-gray-900 placeholder-gray-200 focus:ring-0 focus:shadow-none transition-all outline-none tabular-nums tracking-tight"
                         />
                     </div>
@@ -144,8 +174,8 @@ export const MRRCalculatorForm = ({
                                 min={0} max={10} step={0.5}
                                 value={refundRate}
                                 onChange={(e) => setRefundRate(parseFloat(e.target.value))}
-                                className="w-full text-emerald-500"
-                                style={getSliderBackground(refundRate, 10, '#34d399', '#059669')}
+                                className="mrr-range"
+                                style={getSliderBackground(refundRate, 10, '#2563eb')}
                             />
                         </div>
 
@@ -160,8 +190,8 @@ export const MRRCalculatorForm = ({
                                 min={0} max={5} step={0.1}
                                 value={chargebackRate}
                                 onChange={(e) => setChargebackRate(parseFloat(e.target.value))}
-                                className="w-full text-orange-500"
-                                style={getSliderBackground(chargebackRate, 5, '#fb923c', '#ea580c')}
+                                className="mrr-range"
+                                style={getSliderBackground(chargebackRate, 5, '#2563eb')}
                             />
                         </div>
                     </div>
@@ -181,8 +211,8 @@ export const MRRCalculatorForm = ({
                                 min={0} max={100} step={5}
                                 value={euUkSalesPercent}
                                 onChange={(e) => setEuUkSalesPercent(parseInt(e.target.value))}
-                                className="w-full text-blue-500"
-                                style={getSliderBackground(euUkSalesPercent, 100, '#60a5fa', '#2563eb')}
+                                className="mrr-range"
+                                style={getSliderBackground(euUkSalesPercent, 100, '#2563eb')}
                             />
                         </div>
 
@@ -197,8 +227,8 @@ export const MRRCalculatorForm = ({
                                 min={0} max={100} step={5}
                                 value={usSalesPercent}
                                 onChange={(e) => setUsSalesPercent(parseInt(e.target.value))}
-                                className="w-full text-purple-500"
-                                style={getSliderBackground(usSalesPercent, 100, '#c084fc', '#9333ea')}
+                                className="mrr-range"
+                                style={getSliderBackground(usSalesPercent, 100, '#2563eb')}
                             />
                         </div>
                     </div>

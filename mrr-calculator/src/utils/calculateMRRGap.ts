@@ -49,8 +49,8 @@ function calculateProcessorFees(mrr: number, processor: PaymentProcessor): numbe
   
   switch (processor) {
     case 'stripe':
-      // Stripe: 2.9% + $0.30 per transaction
-      return (mrr * 0.029) + (0.30 * transactions);
+      // Stripe: 2.9% + $0.30 per transaction (assumed avg ticket = $100)
+      return (mrr * 0.029) + (0.30 * Math.ceil(mrr / 100));
     
     case 'paypal':
       // PayPal: 3.49% + $0.49 per transaction
@@ -167,7 +167,7 @@ export function formatCurrency(amount: number): string {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    maximumFractionDigits: 2
   }).format(amount);
 }
 

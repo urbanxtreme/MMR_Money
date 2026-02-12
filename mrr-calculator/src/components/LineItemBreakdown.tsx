@@ -66,7 +66,7 @@ export const LineItemBreakdown = ({
             icon: '⏳',
             color: 'text-orange-600',
             bgColor: 'bg-orange-50',
-            description: 'Stripe holds 10% for new accounts — returned after 6 months',
+            description: '10% held for 90 days',
             category: 'hold'
         },
         {

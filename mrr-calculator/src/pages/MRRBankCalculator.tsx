@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { MRRCalculatorForm } from '../components/MRRCalculatorForm';
 import { GapSummary } from '../components/GapSummary';
 import { WaterfallChart } from '../components/WaterfallChart';
@@ -8,13 +8,45 @@ import type { PaymentProcessor, CalculatorInputs, CalculationResult } from '../u
 import { calculateMRRGap } from '../utils/calculateMRRGap';
 
 export const MRRBankCalculator = () => {
-    const [mrr, setMrr] = useState<number | ''>('');
-    const [processor, setProcessor] = useState<PaymentProcessor | ''>('');
+    const [mrr, setMrr] = useState<number | ''>(10000);
+    const [processor, setProcessor] = useState<PaymentProcessor | ''>('stripe');
     const [refundRate, setRefundRate] = useState<number>(2);
     const [chargebackRate, setChargebackRate] = useState<number>(0.5);
     const [euUkSalesPercent, setEuUkSalesPercent] = useState<number>(30);
     const [usSalesPercent, setUsSalesPercent] = useState<number>(50);
     const [isNewStripeAccount, setIsNewStripeAccount] = useState<boolean>(false);
+
+    // Track page view
+    useEffect(() => {
+        // @ts-ignore
+        window.dataLayer = window.dataLayer || [];
+        // @ts-ignore
+        window.dataLayer.push({
+            event: 'mrr_calculator_viewed',
+            timestamp: new Date().toISOString()
+        });
+    }, []);
+
+    // Track interaction (could be debounced, but simple implementation for now)
+    const trackInteraction = () => {
+        // @ts-ignore
+        window.dataLayer?.push({ event: 'mrr_calculator_interacted' });
+    };
+
+    // Track when calculation is "complete" (all valid)
+    useEffect(() => {
+        if (mrr && processor) {
+            const timeout = setTimeout(() => {
+                // @ts-ignore
+                window.dataLayer?.push({
+                    event: 'mrr_calculator_completed',
+                    mrr_amount: mrr,
+                    processor: processor
+                });
+            }, 2000); // 2s debounce to capture "final" state
+            return () => clearTimeout(timeout);
+        }
+    }, [mrr, processor]);
 
     // Calculate results using memoization for performance
     const calculationResult: CalculationResult = useMemo(() => {
@@ -47,8 +79,13 @@ export const MRRBankCalculator = () => {
         return calculateMRRGap(inputs);
     }, [mrr, processor, refundRate, chargebackRate, euUkSalesPercent, usSalesPercent, isNewStripeAccount]);
 
+    const handleCtaClick = () => {
+        // @ts-ignore
+        window.dataLayer?.push({ event: 'mrr_cta_clicked' });
+    };
+
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-white" onChange={trackInteraction}>
             {/* Minimal Header */}
             <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
                 <div className="w-full px-4 lg:px-6">
@@ -60,13 +97,23 @@ export const MRRBankCalculator = () => {
                         </div>
 
                         <h1 className="font-semibold text-gray-900 text-lg">MRR vs Bank Calculator</h1>
+
+                        <div className="ml-auto">
+                            <a
+                                href="/signup?utm_source=calculator&utm_medium=tool&utm_campaign=mrr_gap"
+                                onClick={handleCtaClick}
+                                className="text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg transition-colors"
+                            >
+                                Get Started
+                            </a>
+                        </div>
                     </div>
 
                 </div>
             </header>
 
             {/* Main Content Area */}
-            <div className="flex flex-col lg:flex-row">
+            <div className="flex flex-col lg:flex-row max-w-7xl mx-auto w-full">
                 {/* Left Sidebar - Fixed on Desktop */}
                 <aside className="w-full lg:w-[380px] lg:flex-shrink-0 bg-gray-50 border-b lg:border-b-0 lg:border-r border-gray-200">
                     <div className="lg:sticky lg:top-14 lg:w-[380px] lg:h-[calc(100vh-56px)] overflow-y-auto p-4 lg:p-6 no-scrollbar">
@@ -106,6 +153,21 @@ export const MRRBankCalculator = () => {
 
                         {/* Educational Content */}
                         <EducationalCallout />
+
+                        {/* Bottom CTA */}
+                        <div className="bg-emerald-50 rounded-xl p-8 text-center border border-emerald-100">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-2">Stop losing revenue to hidden fees</h2>
+                            <p className="text-gray-600 mb-6 max-w-lg mx-auto">
+                                Optimize your payment stack and keep more of what you earn.
+                            </p>
+                            <a
+                                href="/signup?utm_source=calculator&utm_medium=tool&utm_campaign=mrr_gap"
+                                onClick={handleCtaClick}
+                                className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 md:text-lg transition-colors"
+                            >
+                                Start Optimizing Now
+                            </a>
+                        </div>
                     </div>
                 </main>
             </div>

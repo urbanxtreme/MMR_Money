@@ -40,7 +40,7 @@ const TOOLTIP_DESCRIPTIONS: Record<string, string> = {
     'Processor Fees': 'Fees charged by your payment processor for handling transactions.',
     'Refunds': 'Money returned to customers who requested refunds.',
     'Chargebacks': 'Disputed transactions where the bank reversed the payment.',
-    'Rolling Reserve': 'Stripe holds 10% of new accounts\' revenue for 6 months as protection.',
+    'Rolling Reserve': '10% held for 90 days',
     'VAT Collected': 'Value Added Tax collected on EU/UK sales - this was never your money.',
     'US Sales Tax': 'Sales tax collected on US transactions - this was never your money.',
     'Net to Bank': 'The actual amount that will be deposited into your bank account.',
@@ -148,7 +148,7 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
     };
 
     return (
-        <div className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm">
+        <div className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm" aria-label="Waterfall chart showing revenue breakdown">
             {/* Header */}
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Where Your Money Goes
@@ -175,7 +175,7 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
             </div>
 
             {/* Chart */}
-            <div className="h-[340px] w-full">
+            <div className="h-[260px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         layout="vertical"
