@@ -75,6 +75,7 @@ function calculateProcessorFees(mrr: number, processor: PaymentProcessor): numbe
  * Calculate all deductions and the final bank deposit amount
  */
 export function calculateMRRGap(inputs: CalculatorInputs): CalculationResult {
+  console.log('[DEBUG] calculateMRRGap starting with inputs:', inputs);
   const {
     mrr,
     processor,
@@ -122,13 +123,16 @@ export function calculateMRRGap(inputs: CalculatorInputs): CalculationResult {
   const totalGap = mrr - netToBank;
   const gapPercent = mrr > 0 ? (totalGap / mrr) * 100 : 0;
 
-  return {
+  const result: CalculationResult = {
     mrr,
     deductions,
     netToBank,
     totalGap,
     gapPercent
   };
+
+  console.log('[DEBUG] calculateMRRGap finished with result:', result);
+  return result;
 }
 
 /**

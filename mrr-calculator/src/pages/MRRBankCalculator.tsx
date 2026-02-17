@@ -50,6 +50,7 @@ export const MRRBankCalculator = () => {
 
     // Calculate results using memoization for performance
     const calculationResult: CalculationResult = useMemo(() => {
+        console.log('[DEBUG] Recalculating MRR gap in MRRBankCalculator useMemo');
         if (mrr === '' || processor === '') {
             return {
                 mrr: 0,
@@ -76,10 +77,13 @@ export const MRRBankCalculator = () => {
             usSalesPercent,
             isNewStripeAccount
         };
-        return calculateMRRGap(inputs);
+        const result = calculateMRRGap(inputs);
+        console.log('[DEBUG] Calculation completed in MRRBankCalculator:', result);
+        return result;
     }, [mrr, processor, refundRate, chargebackRate, euUkSalesPercent, usSalesPercent, isNewStripeAccount]);
 
     const handleCtaClick = () => {
+        console.log('[DEBUG] CTA Button Clicked');
         // @ts-ignore
         window.dataLayer?.push({ event: 'mrr_cta_clicked' });
     };
@@ -96,7 +100,7 @@ export const MRRBankCalculator = () => {
                             </svg>
                         </div>
 
-                        <h1 className="font-semibold text-gray-900 text-lg">MRR vs Bank Calculator</h1>
+                        <h1 className="font-semibold text-gray-900 text-lg">Testing for MRR vs Bank Account Calculator</h1>
 
                         <div className="ml-auto">
                             <a

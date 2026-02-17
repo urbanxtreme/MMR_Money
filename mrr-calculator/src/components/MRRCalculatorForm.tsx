@@ -78,44 +78,80 @@ export const MRRCalculatorForm = ({
 
     const handleMrrChange = (e: ChangeEvent<HTMLInputElement>) => {
         const rawValue = e.target.value;
+        console.log('[DEBUG] MRR input value changed:', rawValue);
 
         // Allow digits, one dot, and commas (we'll strip commas for parsing)
         // Regex: Allow only numbers, dots, and commas. 
-        if (!/^[0-9.,]*$/.test(rawValue)) return;
+        if (!/^[0-9.,]*$/.test(rawValue)) {
+            console.log('[DEBUG] Blocking invalid numeric characters');
+            return;
+        }
 
         // Check for multiple dots
-        if ((rawValue.match(/\./g) || []).length > 1) return;
+        if ((rawValue.match(/\./g) || []).length > 1) {
+            console.log('[DEBUG] Blocking multiple decimal points');
+            return;
+        }
+
+        // Strip commas for parsing
+        const cleanValue = rawValue.replace(/,/g, '');
+
+        // Check MAX limit before updating state
+        if (cleanValue !== '' && cleanValue !== '.') {
+            const parsedCheck = parseFloat(cleanValue);
+            if (!isNaN(parsedCheck) && parsedCheck > 5000000) {
+                console.log('[DEBUG] Blocking value > 5M');
+                return;
+            }
+        }
+
+        // Check decimal precision (max 2 decimals)
+        if (rawValue.includes('.')) {
+            const parts = rawValue.split('.');
+            if (parts[1].length > 2) {
+                console.log('[DEBUG] Blocking decimal precision > 2');
+                return;
+            }
+        }
 
         setLocalMrr(rawValue);
 
         // Parse and update parent if valid
-        // Strip commas for parsing
-        const cleanValue = rawValue.replace(/,/g, '');
 
         if (cleanValue === '' || cleanValue === '.') {
+            console.log('[DEBUG] Input empty or just dot. Setting MRR to empty string.');
             setMrr(''); // Treat as empty or 0? user interface shows "Required" if empty
             return;
         }
 
         const parsed = parseFloat(cleanValue);
         if (!isNaN(parsed)) {
+            console.log('[DEBUG] Setting parent MRR to:', parsed);
             setMrr(parsed);
         }
     };
 
     const handleBlur = () => {
-        if (mrr === '') {
+        console.log('[DEBUG] MRR input blur occurred. Prop value:', mrr);
+        if (mrr === '' || mrr === undefined) {
             setLocalMrr('');
             return;
         }
 
         // Clamp between 500 and 5,000,000 (increased max for bigger users)
         let newVal = typeof mrr === 'number' ? mrr : 0;
-        if (newVal < 500) newVal = 500;
-        if (newVal > 5000000) newVal = 5000000;
+        if (newVal < 500) {
+            console.log('[DEBUG] Clamping to minimum of 500');
+            newVal = 500;
+        }
+        if (newVal > 5000000) {
+            console.log('[DEBUG] Clamping to maximum of 5M');
+            newVal = 5000000;
+        }
 
         setMrr(newVal);
         setLocalMrr(newVal.toLocaleString('en-US', { maximumFractionDigits: 2 }));
+        console.log('[DEBUG] Blur reformatting complete. New value:', newVal);
     };
 
     const getSliderBackground = (value: number, max: number, color: string) => {

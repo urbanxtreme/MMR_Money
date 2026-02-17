@@ -108,7 +108,9 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
             end: netToBank
         });
 
-        return items;
+        const resultItems = items;
+        console.log('[DEBUG] Built Waterfall Chart data:', resultItems);
+        return resultItems;
     }, [mrr, deductions, netToBank]);
 
     // Custom tooltip component
