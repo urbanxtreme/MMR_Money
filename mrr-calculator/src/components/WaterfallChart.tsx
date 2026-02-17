@@ -175,7 +175,7 @@ export const WaterfallChart = ({ result }: WaterfallChartProps) => {
             </div>
 
             {/* Chart */}
-            <div className="h-[260px] w-full">
+            <div className="h-[220px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         layout="vertical"

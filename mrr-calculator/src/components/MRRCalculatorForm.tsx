@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import { useState, useEffect, type ChangeEvent } from 'react';
 import type { PaymentProcessor } from '../utils/calculateMRRGap';
 import {
     getProcessorDisplayName,
@@ -47,31 +47,75 @@ export const MRRCalculatorForm = ({
     setIsNewStripeAccount
 }: MRRCalculatorFormProps) => {
 
-    const handleMrrChange = (e: ChangeEvent<HTMLInputElement>) => {
-        // Remove non-numeric chars except dot
-        const value = e.target.value.replace(/[^0-9.]/g, '');
+    // Local state for the input value to allow typing decimals freely
+    const [localMrr, setLocalMrr] = useState<string>(
+        mrr === '' ? '' : mrr.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    );
 
-        if (value === '') {
-            setMrr('');
+    // Sync local state when prop changes externally (but not while typing if possible to avoid cursor jumps, although simple sync is safer for now)
+    // We only sync if the numeric value of localMrr doesn't match mrr (to avoid formatting fighting)
+    // Actually, simple sync might be annoying. Let's only sync if they are efficiently different or on mount.
+    // For now, let's just initialize. If mrr changes from outside (e.g. presets), we should update.
+    useEffect(() => {
+        // If mrr is empty, just set empty
+        if (mrr === '') {
+            if (localMrr !== '') setLocalMrr('');
             return;
         }
 
-        // Handle multiple dots
-        const parts = value.split('.');
-        if (parts.length > 2) return;
+        // If mrr is a number, checks if it matches our current local parsed value
+        // clean current local
+        const cleanLocal = localMrr.replace(/,/g, '');
+        const parsedLocal = parseFloat(cleanLocal);
 
-        setMrr(parseFloat(value));
+        // If they are different (handling float precision loosely), update local
+        // This handles the case where parent updates mrr (e.g. initial load or reset)
+        if (Math.abs(parsedLocal - mrr) > 0.001 || isNaN(parsedLocal)) {
+            setLocalMrr(mrr.toLocaleString('en-US', { maximumFractionDigits: 2 }));
+        }
+    }, [mrr]);
+
+
+    const handleMrrChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;
+
+        // Allow digits, one dot, and commas (we'll strip commas for parsing)
+        // Regex: Allow only numbers, dots, and commas. 
+        if (!/^[0-9.,]*$/.test(rawValue)) return;
+
+        // Check for multiple dots
+        if ((rawValue.match(/\./g) || []).length > 1) return;
+
+        setLocalMrr(rawValue);
+
+        // Parse and update parent if valid
+        // Strip commas for parsing
+        const cleanValue = rawValue.replace(/,/g, '');
+
+        if (cleanValue === '' || cleanValue === '.') {
+            setMrr(''); // Treat as empty or 0? user interface shows "Required" if empty
+            return;
+        }
+
+        const parsed = parseFloat(cleanValue);
+        if (!isNaN(parsed)) {
+            setMrr(parsed);
+        }
     };
 
     const handleBlur = () => {
-        if (mrr === '') return;
+        if (mrr === '') {
+            setLocalMrr('');
+            return;
+        }
 
-        // Clamp between 500 and 500,000
-        let newVal = mrr;
+        // Clamp between 500 and 5,000,000 (increased max for bigger users)
+        let newVal = typeof mrr === 'number' ? mrr : 0;
         if (newVal < 500) newVal = 500;
-        if (newVal > 500000) newVal = 500000;
+        if (newVal > 5000000) newVal = 5000000;
 
         setMrr(newVal);
+        setLocalMrr(newVal.toLocaleString('en-US', { maximumFractionDigits: 2 }));
     };
 
     const getSliderBackground = (value: number, max: number, color: string) => {
@@ -87,7 +131,7 @@ export const MRRCalculatorForm = ({
 
 
     return (
-        <div className="space-y-2.5 font-sans text-gray-900">
+        <div className="space-y-5 font-sans text-gray-900">
             {/* Header */}
             <div className="flex items-center justify-between py-1">
                 <div>
@@ -121,7 +165,7 @@ export const MRRCalculatorForm = ({
                             type="text"
                             inputMode="decimal"
                             placeholder="10,000"
-                            value={mrr === '' ? '' : mrr.toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                            value={localMrr}
                             onChange={handleMrrChange}
                             onBlur={handleBlur}
                             className="w-full bg-transparent border-none p-0 text-3xl font-extrabold text-gray-900 placeholder-gray-200 focus:ring-0 focus:shadow-none transition-all outline-none tabular-nums tracking-tight"
@@ -237,7 +281,7 @@ export const MRRCalculatorForm = ({
             </div>
 
             {/* Modern Stripe Toggle */}
-            <div className={`relative overflow-hidden rounded-xl border transition-all duration-300 group ${processor === 'stripe' ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-100 bg-gray-50 opacity-60'}`}>
+            <div className={`relative overflow-hidden rounded-xl border transition-all duration-300 group mt-6 ${processor === 'stripe' ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-100 bg-gray-50 opacity-60'}`}>
                 <label className="flex items-center justify-between p-3 cursor-pointer z-10 relative">
                     <div className="flex items-center gap-2.5">
                         <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs shadow-sm transition-colors ${processor === 'stripe' ? 'bg-white text-emerald-600' : 'bg-gray-200 text-gray-400'}`}>

@@ -100,8 +100,12 @@ export const MRRBankCalculator = () => {
 
                         <div className="ml-auto">
                             <a
-                                href="/signup?utm_source=calculator&utm_medium=tool&utm_campaign=mrr_gap"
-                                onClick={handleCtaClick}
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleCtaClick();
+                                    alert("Signup coming soon!");
+                                }}
                                 className="text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg transition-colors"
                             >
                                 Get Started
@@ -161,8 +165,12 @@ export const MRRBankCalculator = () => {
                                 Optimize your payment stack and keep more of what you earn.
                             </p>
                             <a
-                                href="/signup?utm_source=calculator&utm_medium=tool&utm_campaign=mrr_gap"
-                                onClick={handleCtaClick}
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleCtaClick();
+                                    alert("Signup coming soon!");
+                                }}
                                 className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 md:text-lg transition-colors"
                             >
                                 Start Optimizing Now
