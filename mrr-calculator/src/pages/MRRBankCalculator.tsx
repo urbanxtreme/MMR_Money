@@ -153,15 +153,6 @@ export const MRRBankCalculator = () => {
                         {/* Waterfall Chart */}
                         <WaterfallChart result={calculationResult} />
 
-                        {/* Line Item Breakdown */}
-                        <LineItemBreakdown
-                            result={calculationResult}
-                            processor={processor || 'stripe'}
-                        />
-
-                        {/* Educational Content */}
-                        <EducationalCallout />
-
                         {/* Bottom CTA */}
                         <div className="bg-emerald-50 rounded-xl p-8 text-center border border-emerald-100">
                             <h2 className="text-2xl font-bold text-gray-900 mb-2">Stop losing revenue to hidden fees</h2>
@@ -180,6 +171,15 @@ export const MRRBankCalculator = () => {
                                 Start Optimizing Now
                             </a>
                         </div>
+
+                        {/* Line Item Breakdown */}
+                        <LineItemBreakdown
+                            result={calculationResult}
+                            processor={processor || 'stripe'}
+                        />
+
+                        {/* Educational Content */}
+                        <EducationalCallout />
                     </div>
                 </main>
             </div>

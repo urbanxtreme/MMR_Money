@@ -2,23 +2,24 @@
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  background: transparent;
   cursor: pointer;
+  height: 8px;
+  border-radius: 9999px;
+  background: #f1f5f9;
 }
 
 /* Thicker, Modern Track */
 input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
-  height: 8px; /* Thicker */
-  background: #f1f5f9;
+  height: 8px;
+  background: transparent;
   border-radius: 9999px;
   cursor: pointer;
-  transition: background 0.2s ease;
 }
 
 /* Hover effect on track */
 input[type="range"]:hover::-webkit-slider-runnable-track {
-    background: #e2e8f0;
+    background: transparent;
 }
 
 /* Large, Shadowed Thumb */
@@ -31,9 +32,11 @@ input[type="range"]::-webkit-slider-thumb {
   background: white;
   cursor: pointer;
   margin-top: -6px; /* Center on 8px track */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* strong shadow */
-  border: 2px solid currentColor; /* Will inherit text color for border */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 2px solid #94a3b8;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
@@ -55,13 +58,19 @@ input[type="range"]::-moz-range-track {
   cursor: pointer;
 }
 
+input[type="range"]::-moz-range-progress {
+  height: 8px;
+  background: #2563eb;
+  border-radius: 9999px 0 0 9999px;
+}
+
 input[type="range"]::-moz-range-thumb {
   height: 20px;
   width: 20px;
   border-radius: 50%;
   background: white;
   cursor: pointer;
-  border: 2px solid currentColor;
+  border: 2px solid #94a3b8;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
 }

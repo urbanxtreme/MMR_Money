@@ -157,10 +157,7 @@ export const MRRCalculatorForm = ({
     const getSliderBackground = (value: number, max: number, color: string) => {
         const percentage = (value / max) * 100;
         return {
-            backgroundSize: `${percentage}% 100%`,
-            backgroundImage: `linear-gradient(${color}, ${color})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: '#f1f5f9'
+            background: `linear-gradient(to right, ${color} ${percentage}%, #e2e8f0 ${percentage}%)`,
         };
     };
 
