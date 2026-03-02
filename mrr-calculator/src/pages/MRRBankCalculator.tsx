@@ -100,7 +100,9 @@ export const MRRBankCalculator = () => {
                             </svg>
                         </div>
 
-                        <h1 className="font-semibold text-gray-900 text-lg">Testing for MRR vs Bank Account Calculator</h1>
+                        <h1 className="font-semibold text-gray-900 text-lg truncate min-w-0 flex-1">
+                            Testing for MRR vs Bank Account Calculator
+                        </h1>
 
                         <div className="ml-auto">
                             <a
@@ -110,7 +112,7 @@ export const MRRBankCalculator = () => {
                                     handleCtaClick();
                                     alert("Signup coming soon!");
                                 }}
-                                className="text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg transition-colors"
+                                className="text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg transition-colors whitespace-nowrap flex-shrink-0"
                             >
                                 Get Started
                             </a>
